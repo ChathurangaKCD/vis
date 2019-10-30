@@ -1,17 +1,21 @@
+import { Box, CSSReset, theme, ThemeProvider } from "@chakra-ui/core";
+import { StoreProvider } from "easy-peasy";
 import React from "react";
 import "./App.css";
+import store from "./store";
 import { ServicesView } from "./views/services";
-import { ThemeProvider, CSSReset, theme, Box } from "@chakra-ui/core";
 
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CSSReset />
       <React.StrictMode>
-        <Box m={4}>
-          {/* useTitle */}
-          <ServicesView />
-        </Box>
+        <StoreProvider store={store}>
+          <Box m={4}>
+            {/* useTitle */}
+            <ServicesView />
+          </Box>
+        </StoreProvider>
       </React.StrictMode>
     </ThemeProvider>
   );
