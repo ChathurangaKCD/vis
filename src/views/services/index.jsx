@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   RadioButtonGroup,
@@ -12,8 +12,15 @@ import { ServiceEditor } from "./editor/service_editor";
 import { ServiceList } from "./list/service_list";
 import { ServiceGraph } from "./graph/service_graph";
 import { RadioButton } from "../../common/radio_button";
+import { useStoreActions } from "easy-peasy";
 
 export function ServicesView() {
+  const reloadServices = useStoreActions(
+    actions => actions.services.reloadServices
+  );
+  useEffect(() => {
+    reloadServices();
+  }, [reloadServices]);
   const [viewType, setViewType] = useState("list");
   const ViewContent = viewType === "list" ? ServiceList : ServiceGraph;
   const {
