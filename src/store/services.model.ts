@@ -17,7 +17,7 @@ export const servicesModel: ServicesModel = {
     state.byId = Object.fromEntries(payload.map(s => [s.id, s]));
   }),
   reloadServices: thunk(async (actions, _, { injections }) => {
-    const serviceList = await injections.servicesAPI.fetchServices();
+    const serviceList = await injections.servicesAPI.fetchAllServices();
     actions.replaceServices(serviceList);
   })
 };
