@@ -11,7 +11,7 @@ const App: React.FC = () => {
       <CSSReset />
       <React.StrictMode>
         <StoreProvider store={store}>
-          <Box m={4}>
+          <Box p={2} h="100vh" w="100vw">
             {/* useTitle */}
             <ServicesView />
           </Box>
