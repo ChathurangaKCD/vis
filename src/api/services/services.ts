@@ -1,12 +1,8 @@
 import { Service, ServiceID } from "../../types/service";
 import { Requests } from "../requests";
+import { API_BASE_URL } from "./constants";
 
-const BASE_URL = "/api/services/";
-
-export async function fetchServices(): Promise<Service[]> {
-  const { default: data } = await import("./data.json");
-  return data.services as Service[];
-}
+const BASE_URL = API_BASE_URL + "/api/services/";
 
 export async function fetchAllServices(): Promise<Service[]> {
   const url = BASE_URL;
