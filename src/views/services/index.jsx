@@ -30,11 +30,11 @@ export function ServicesView() {
   } = useDisclosure(true);
   return (
     <>
-      <Stack>
-        <Flex justify="center">
+      <Stack h="100%" w="100%">
+        <Flex flexBasis="auto" justify="center">
           <ViewTypeSelect onTypeSelect={setViewType}></ViewTypeSelect>
         </Flex>
-        <Box>
+        <Box h="100%" w="100%" overflow="auto">
           <ViewContent onClickAdd={openEditor} />
         </Box>
       </Stack>
