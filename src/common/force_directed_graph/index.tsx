@@ -57,7 +57,7 @@ function ForceDirectedGraph(props: ForceDirectedGraphProps) {
         animation={animation}
         colorType={"category"}
         stroke={"#ddd"}
-        strokeWidth={2}
+        strokeWidth={8}
         size={30}
         colorRange={colors}
         onValueClick={(datapoint: GraphNode) => {

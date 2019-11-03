@@ -6,9 +6,9 @@ import { useGetGraphData, useGetGraphSize } from "./fns";
 import { ServiceInfoView } from "./service_info_view";
 
 export function ServiceGraph() {
-  const data = useGetGraphData();
   const { height, width } = useGetGraphSize();
   const [selectedId, setSelectedId] = useState<ServiceID | null>(null);
+  const data = useGetGraphData(selectedId);
   const onSelectService = useCallback(
     (sId: ServiceID) => setSelectedId(sId),
     []

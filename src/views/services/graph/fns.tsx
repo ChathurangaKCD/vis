@@ -13,12 +13,17 @@ export function useGetGraphSize(
   return { height: graphHeight, width: graphWidth };
 }
 
-export function useGetGraphData() {
+export function useGetGraphData(selectedId: ServiceID | null) {
   const { byId, allIds } = useStoreState(state => state.services);
   const data = useMemo(() => {
     const nodes = allIds.map(svcId => {
       const { type } = byId[svcId];
-      return { label: `${svcId}`, id: svcId, color: type === "gRPC" ? 0 : 1 };
+      const isSelected = svcId === selectedId;
+      return {
+        label: `${svcId}`,
+        id: svcId,
+        ...getNodeStyles(type, isSelected)
+      };
     });
     const links = allIds.flatMap(svcId => {
       return byId[svcId].dependsOn.map(depId => {
@@ -26,10 +31,16 @@ export function useGetGraphData() {
       });
     });
     return { nodes, links };
-  }, [byId, allIds]);
+  }, [byId, allIds, selectedId]);
   return data;
 }
 
 export function getNodeColor(type: ServiceType) {
   return type === "HTTP" ? "teal" : "blue";
+}
+
+function getNodeStyles(type: ServiceType, isSelected: boolean) {
+  const color = type === "gRPC" ? 0 : 1;
+  if (!isSelected) return { color };
+  return { color, opacity: 0.5 };
 }
