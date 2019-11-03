@@ -1,19 +1,19 @@
-export interface Node {
+export interface GraphNode {
   label: string;
   id: number;
   group?: number;
   color?: number;
 }
 
-export interface Link {
+export interface GraphLink {
   source: number;
   target: number;
   value: number;
 }
 
 export interface NodeLinks {
-  nodes: Node[];
-  links: Link[];
+  nodes: GraphNode[];
+  links: GraphLink[];
 }
 
 export interface SimulationProps {

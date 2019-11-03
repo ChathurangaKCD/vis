@@ -4,25 +4,11 @@ import React, { useMemo } from "react";
 //@ts-ignore
 import { LabelSeries, LineSeries, MarkSeries, XYPlot } from "react-vis";
 import "./index.scss";
-import { NodeLinks } from "./types";
+import { NodeLinks, GraphNode } from "./types";
 import { generateSimulation } from "./simulation";
+import { ServiceID } from "../../types/service";
 
-const colors = [
-  "#19CDD7",
-  "#DDB27C",
-  "#88572C",
-  "#FF991F",
-  "#F15C17",
-  "#223F9A",
-  "#DA70BF",
-  "#4DC19C",
-  "#12939A",
-  "#B7885E",
-  "#FFCB99",
-  "#F89570",
-  "#E79FD5",
-  "#89DAC1"
-];
+const colors = ["#4299E1", "#48BB78"];
 
 interface ForceDirectedGraphProps {
   className?: string;
@@ -31,11 +17,19 @@ interface ForceDirectedGraphProps {
   width: number;
   steps?: number;
   animation: boolean;
+  onClickService: (serviceId: ServiceID) => any;
 }
 const margin = { left: 50, right: 50, top: 50, bottom: 50 };
 
 function ForceDirectedGraph(props: ForceDirectedGraphProps) {
-  const { className = "", data, height, width, animation } = props;
+  const {
+    className = "",
+    data,
+    height,
+    width,
+    animation,
+    onClickService
+  } = props;
 
   const simData = useMemo(
     () =>
@@ -63,13 +57,17 @@ function ForceDirectedGraph(props: ForceDirectedGraphProps) {
         animation={animation}
         colorType={"category"}
         stroke={"#ddd"}
-        strokeWidth={2}
+        strokeWidth={8}
         size={30}
         colorRange={colors}
+        onValueClick={(datapoint: GraphNode) => {
+          onClickService(datapoint.id);
+        }}
       />
       <LabelSeries
         animation
         allowOffsetToBeReversed
+        className="avoid-clicks"
         data={nodes}
         labelAnchorX="middle"
         labelAnchorY="middle"
