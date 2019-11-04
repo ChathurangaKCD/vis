@@ -1,9 +1,12 @@
-import { Collapse, Flex } from "@chakra-ui/core";
-import React, { useCallback, useState } from "react";
-import ForceDirectedGraph from "../../../common/force_directed_graph";
+import { Collapse, Flex, Spinner } from "@chakra-ui/core";
+import React, { Suspense, useCallback, useState } from "react";
 import { ServiceID } from "../../../types/service";
 import { useGetGraphData, useGetGraphSize } from "./fns";
 import { ServiceInfoView } from "./service_info_view";
+
+const ForceDirectedGraph = React.lazy(() =>
+  import("../../../common/force_directed_graph")
+);
 
 export function ServiceGraph() {
   const { height, width } = useGetGraphSize();
@@ -15,7 +18,19 @@ export function ServiceGraph() {
   );
   const clearSelection = useCallback(() => setSelectedId(null), []);
   return (
-    <>
+    <Suspense
+      fallback={
+        <Flex h="100%" w="100%" justifyContent="center" alignItems="center">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Flex>
+      }
+    >
       <Flex h="100%" w="100%" overflow="auto" justifyContent="center">
         <ForceDirectedGraph
           height={height}
@@ -35,6 +50,6 @@ export function ServiceGraph() {
           />
         )}
       </Collapse>
-    </>
+    </Suspense>
   );
 }
