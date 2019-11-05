@@ -1,4 +1,11 @@
-import { Box, Button, ButtonGroup, CloseButton, Flex } from "@chakra-ui/core";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  CloseButton,
+  Flex,
+  Text
+} from "@chakra-ui/core";
 import React from "react";
 import { Service, ServiceType, ServiceID } from "../../../types/service";
 import { getNodeColor } from "./fns";
@@ -18,13 +25,27 @@ export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
   const bg = `${colorVariant}.400`;
   return (
     <Flex justify="space-between" bg={bg} color="white">
-      <Box m={2}> Service ID: {id} </Box>
-      <Box m={2}> Type: {type} </Box>
-      <ButtonGroup m={2} size="sm" spacing={4}>
-        <Button leftIcon="email" variantColor={colorVariant} variant="solid">
+      <Box m={2}>
+        <Text as="i">Service ID:</Text> {id}
+      </Box>
+      <Box m={2}>
+        <Text as="i">Type:</Text> {type}
+      </Box>
+      <ButtonGroup m={1} size="sm" spacing={4}>
+        <Button
+          leftIcon="edit"
+          m={1}
+          variantColor={colorVariant}
+          variant="solid"
+        >
           Edit
         </Button>
-        <Button leftIcon="delete" variantColor={colorVariant} variant="solid">
+        <Button
+          leftIcon="delete"
+          m={1}
+          variantColor={colorVariant}
+          variant="solid"
+        >
           Delete
         </Button>
       </ButtonGroup>
