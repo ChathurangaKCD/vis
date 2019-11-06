@@ -8,7 +8,11 @@ import {
   useDisclosure
 } from "@chakra-ui/core";
 
-export const RadioButton = React.forwardRef((props, ref) => {
+interface RadioButtonProps {
+  children: string;
+  value: string;
+}
+export const RadioButton = React.forwardRef((props: RadioButtonProps, ref) => {
   const { isChecked, isDisabled, value, children, ...rest } = props as any;
   return (
     <Button

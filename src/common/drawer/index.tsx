@@ -21,9 +21,8 @@ export function DrawerWrapper({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>{title}</DrawerHeader>
-        <DrawerBody>{content}</DrawerBody>
-        <DrawerFooter>{footerContent}</DrawerFooter>
+        {content}
+        {/* <DrawerFooter>{footerContent}</DrawerFooter> */}
       </DrawerContent>
     </Drawer>
   );

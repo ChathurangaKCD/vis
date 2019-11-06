@@ -35,8 +35,6 @@ export function ServiceGraph() {
             <ServiceInfoView
               serviceId={selectedId}
               onClickClose={clearSelection}
-              onClickEdit={() => {}}
-              onClickDelete={() => {}}
             />
           )}
         </Collapse>

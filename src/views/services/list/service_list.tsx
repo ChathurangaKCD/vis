@@ -1,18 +1,22 @@
 import { Box, Button } from "@chakra-ui/core";
 import React from "react";
-import { useStoreState } from "../../../store/hooks";
+import { useStoreState, useStoreActions } from "../../../store/hooks";
 import { ServiceID } from "../../../types/service";
+import { useFormUiContext } from "../state_provider";
 
-interface ServiceListProps {
-  onClickAdd: () => {};
-  onClickEdit: () => {};
-}
-
-export function ServiceList({ onClickAdd, onClickEdit }: ServiceListProps) {
+export function ServiceList() {
+  const { onClickAdd } = useFormUiContext();
+  const state = useStoreState(state => state.services.dataState);
   const serviceIds = useStoreState(state => state.services.allIds);
+  switch (state) {
+    case "FETCHING":
+      return <div>Loading</div>;
+    case "EMPTY":
+      return <div>No data available..</div>;
+  }
   return (
     <div>
-      list<Button onClick={onClickAdd}>+</Button>
+      <Button onClick={onClickAdd}>Add +</Button>
       {serviceIds.map(serviceId => (
         <ServiceCard serviceId={serviceId} key={serviceId} />
       ))}
@@ -24,10 +28,14 @@ interface ServiceCardProps {
   serviceId: ServiceID;
 }
 function ServiceCard({ serviceId }: ServiceCardProps) {
+  const { onClickEdit } = useFormUiContext();
   const service = useStoreState(state => state.services.byId[serviceId]);
+  const onClickDelete = (serviceId: ServiceID) => {};
   return (
     <Box>
       {service.id}-{service.type}
+      <Button onClick={() => onClickEdit(serviceId)}>Edit</Button>
+      <Button onClick={() => onClickDelete(serviceId)}>Delete</Button>
     </Box>
   );
 }
