@@ -10,9 +10,9 @@ export async function getData(url: string) {
   return await res.json();
 }
 
-export async function postData(url: string = "", data = {}) {
+export async function postData(url: string = "", data = {}, method = "POST") {
   const res = await fetch(url, {
-    method: "POST",
+    method,
     mode: "cors",
     cache: "no-cache",
     credentials: "same-origin", // include, *same-origin, omit
@@ -22,7 +22,7 @@ export async function postData(url: string = "", data = {}) {
     body: JSON.stringify(data)
   });
   if (!res.ok) throw Error("Request Failure");
-  return await res.json();
+  return true;
 }
 
 export async function deleteResource(url: string = "") {

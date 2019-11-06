@@ -36,6 +36,10 @@ export function useFormState() {
   const setEdited = useCallback((edited: boolean) => {
     editedRef.current = edited;
   }, []);
+  const onSubmitSuccess = useCallback(() => {
+    setEdited(false);
+    onClickDiscard();
+  }, []);
   return {
     selectedId,
     isNew,
@@ -44,6 +48,7 @@ export function useFormState() {
     onClickAdd,
     onClickEdit,
     onClickDiscard,
+    onSubmitSuccess,
     setEdited
   };
 }

@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import React, { useCallback, useMemo } from "react";
 import { CheckBoxInput, RadioInput, TextInput } from "../../../common/formik";
 import { Service, ServiceID } from "../../../types/service";
-import { useStoreState } from "../../../store/hooks";
+import { useStoreState, useStoreActions } from "../../../store/hooks";
 import { useFormUiContext } from "../state_provider";
 
 const SERVICE_TYPES = [
@@ -14,9 +14,18 @@ const SERVICE_TYPES = [
 const emptyServiceObj = { id: "", type: "", dependsOn: [] };
 
 export function ServiceEditor() {
-  const { isNew, selectedId, updatedTime, setEdited } = useFormUiContext();
+  const {
+    isNew,
+    selectedId,
+    updatedTime,
+    setEdited,
+    onSubmitSuccess
+  } = useFormUiContext();
   const service = useStoreState(state => state.services.byId[selectedId]);
   const serviceIds = useStoreState(state => state.services.allIds);
+  const { createService, updateService } = useStoreActions(
+    actions => actions.services
+  );
   const editData = isNew ? emptyServiceObj : service;
   /**
    * Filter active service id,
@@ -33,7 +42,14 @@ export function ServiceEditor() {
     return [{ ...editData, dependsOn: currentDeps }, deps];
   }, [editData, serviceIds]);
   if (!editData) return null;
-  const onSubmit = (values: Service) => alert(JSON.stringify(values, null, 2));
+  const onSubmit = async (values: Service) => {
+    // alert(JSON.stringify(values, null, 2))
+    const fn = isNew ? createService : updateService;
+    const res = await fn(values);
+    alert(res);
+    if (res) onSubmitSuccess();
+    return res;
+  };
   return (
     <>
       <DrawerHeader>{isNew ? "Add Service" : "Update Service"}</DrawerHeader>
@@ -55,7 +71,7 @@ interface ServiceFormProps {
   isNew: boolean;
   data: any;
   serviceList: { label: string; value: string }[];
-  onSubmit: (formData: Service) => void;
+  onSubmit: (formData: Service) => Promise<boolean>;
   setEdited: (edited: boolean) => void;
 }
 
@@ -69,10 +85,14 @@ function ServiceForm({
   return (
     <Formik
       initialValues={data}
-      onSubmit={(values, actions) => {
+      onSubmit={async (values, actions) => {
         const dependsOn = values.dependsOn.map((v: any) => parseInt(v, 10));
         const { id, type } = values;
-        onSubmit({ type, id: parseInt(id, 10), dependsOn });
+        const success = await onSubmit({
+          type,
+          id: parseInt(id, 10),
+          dependsOn
+        });
         actions.setSubmitting(false);
       }}
     >

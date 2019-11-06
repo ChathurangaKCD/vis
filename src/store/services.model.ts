@@ -3,13 +3,33 @@ import { Injections } from "./injections";
 import { Service, ServiceID } from "../types/service";
 
 type STORE_DATA_STATE = "EMPTY" | "FETCHING" | "AVAILABLE" | "ERROR";
+
+type ServiceThunk<PayloadType, ReturnType> = Thunk<
+  ServicesModel,
+  PayloadType,
+  Injections,
+  never,
+  Promise<ReturnType>
+>;
+
 export interface ServicesModel {
   dataState: STORE_DATA_STATE;
   byId: { [x: string]: Service };
   allIds: ServiceID[];
   setDataState: Action<ServicesModel, STORE_DATA_STATE>;
+  /** Add new/Update existing service in store */
+  upsertService: Action<ServicesModel, Service>;
+  /** Replace all service data with fetched data */
   replaceServices: Action<ServicesModel, Service[]>;
-  reloadServices: Thunk<ServicesModel, void, Injections>;
+  /** Fetch all services & replace store data */
+  reloadServices: ServiceThunk<void, void>;
+  /** Fetch a service & update store */
+  reloadServiceById: ServiceThunk<ServiceID, boolean>;
+  /** Create new service & update store */
+  createService: ServiceThunk<Service, boolean>;
+  /** Update exisitng service & update store */
+  updateService: ServiceThunk<Service, boolean>;
+  /** Compute dependants of each service */
   dependantsById: Computed<ServicesModel, { [x in ServiceID]: ServiceID[] }>;
 }
 
@@ -22,7 +42,15 @@ export const servicesModel: ServicesModel = {
   }),
   replaceServices: action((state, payload) => {
     state.allIds = payload.map(s => s.id);
+    state.allIds.sort((a, b) => a - b);
     state.byId = Object.fromEntries(payload.map(s => [s.id, s]));
+  }),
+  upsertService: action((state, payload) => {
+    const isNew = !state.byId[payload.id];
+    if (isNew) {
+      state.allIds.push(payload.id);
+    }
+    state.byId[payload.id] = payload;
   }),
   reloadServices: thunk(async (actions, _, { injections }) => {
     actions.setDataState("FETCHING");
@@ -31,7 +59,40 @@ export const servicesModel: ServicesModel = {
       actions.replaceServices(serviceList);
       actions.setDataState("AVAILABLE");
     } catch (error) {
+      console.log(error);
       actions.setDataState("ERROR");
+    }
+  }),
+  reloadServiceById: thunk(async (actions, serviceId, { injections }) => {
+    try {
+      const fetchedService = await injections.servicesAPI.fetchServiceById(
+        serviceId
+      );
+      actions.upsertService(fetchedService);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }),
+  createService: thunk(async (actions, serviceData, { injections }) => {
+    try {
+      await injections.servicesAPI.createService(serviceData);
+      actions.upsertService(serviceData);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }),
+  updateService: thunk(async (actions, serviceData, { injections }) => {
+    try {
+      await injections.servicesAPI.updateService(serviceData);
+      actions.upsertService(serviceData);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }),
   dependantsById: computed(
