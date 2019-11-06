@@ -10,17 +10,17 @@ import React from "react";
 import { Service, ServiceType, ServiceID } from "../../../types/service";
 import { getNodeColor } from "./fns";
 import { useStoreState } from "../../../store/hooks";
+import { useFormUiContext } from "../state_provider";
 
 interface SelectedServiceInfoViewProps {
   serviceId: ServiceID;
-  onClickEdit: (serviceId: Service) => any;
-  onClickDelete: (serviceId: Service) => any;
   onClickClose: () => any;
 }
 
 export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
-  const { serviceId, onClickEdit, onClickDelete, onClickClose } = props;
+  const { serviceId, onClickClose } = props;
   const { id, type } = useStoreState(state => state.services.byId[serviceId]);
+  const { onClickEdit } = useFormUiContext();
   const colorVariant = getNodeColor(type);
   const bg = `${colorVariant}.400`;
   return (
@@ -37,6 +37,7 @@ export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
           m={1}
           variantColor={colorVariant}
           variant="solid"
+          onClick={() => onClickEdit(serviceId)}
         >
           Edit
         </Button>

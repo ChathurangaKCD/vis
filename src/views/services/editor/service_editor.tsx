@@ -1,47 +1,133 @@
-import {
-  Checkbox,
-  CheckboxGroup,
-  FormControl,
-  FormLabel,
-  Input,
-  Radio,
-  RadioGroup,
-  Stack,
-  Button
-} from "@chakra-ui/core";
-import React from "react";
+import { Button, Stack, Box, DrawerBody, DrawerHeader } from "@chakra-ui/core";
+import { Form, Formik } from "formik";
+import React, { useCallback, useMemo } from "react";
+import { CheckBoxInput, RadioInput, TextInput } from "../../../common/formik";
+import { Service, ServiceID } from "../../../types/service";
+import { useStoreState } from "../../../store/hooks";
+import { useFormUiContext } from "../state_provider";
+
+const SERVICE_TYPES = [
+  { value: "HTTP", label: "HTTP" },
+  { value: "gRPC", label: "gRPC" }
+];
+
+const emptyServiceObj = { id: "", type: "", dependsOn: [] };
 
 export function ServiceEditor() {
+  const { isNew, selectedId, updatedTime, setEdited } = useFormUiContext();
+  const service = useStoreState(state => state.services.byId[selectedId]);
+  const serviceIds = useStoreState(state => state.services.allIds);
+  const editData = isNew ? emptyServiceObj : service;
+  /**
+   * Filter active service id,
+   * convert to string {label, value}
+   */
+  const [initFormData, possibleDeps] = useMemo(() => {
+    let ids = serviceIds;
+    let currentDeps: string[] = [];
+    if (editData && editData.id) {
+      ids = ids.filter(id => id !== editData.id);
+      currentDeps = (editData.dependsOn as ServiceID[]).map(v => `${v}`);
+    }
+    const deps = ids.map(id => ({ value: `${id}`, label: `Service ${id}` }));
+    return [{ ...editData, dependsOn: currentDeps }, deps];
+  }, [editData, serviceIds]);
+  if (!editData) return null;
+  const onSubmit = (values: Service) => alert(JSON.stringify(values, null, 2));
   return (
-    <Stack spacing={4}>
-      <FormControl isRequired>
-        <FormLabel htmlFor="service-id">Service ID</FormLabel>
-        <Input type="number" id="service-id" />
-      </FormControl>
-      <FormControl as="fieldset" isRequired>
-        <FormLabel as="legend">Service Type</FormLabel>
-        <RadioGroup defaultValue="Itachi">
-          <Radio value="HTTP">HTTP</Radio>
-          <Radio value="gRPC">gRPC</Radio>
-        </RadioGroup>
-      </FormControl>
-      <FormControl>
-        <FormLabel as="legend">Depends on</FormLabel>
-        <CheckboxGroup
-          variantColor="green"
-          defaultValue={["naruto", "kakashi"]}
-        >
-          <Checkbox value="1">Service 1</Checkbox>
-          <Checkbox value="2">Service 2</Checkbox>
-          <Checkbox value="3">Service 3</Checkbox>
-        </CheckboxGroup>
-      </FormControl>
-      <Stack isInline>
-        <Button variant="outline" mr={3} onClick={() => {}}>
-          Cancel
-        </Button>
-        <Button variantColor="blue">Submit</Button>
-      </Stack>
-    </Stack>
+    <>
+      <DrawerHeader>{isNew ? "Add Service" : "Update Service"}</DrawerHeader>
+      <DrawerBody>
+        <ServiceForm
+          key={updatedTime}
+          isNew={isNew}
+          data={initFormData}
+          onSubmit={onSubmit}
+          serviceList={possibleDeps}
+          setEdited={setEdited}
+        ></ServiceForm>
+      </DrawerBody>
+    </>
+  );
+}
+
+interface ServiceFormProps {
+  isNew: boolean;
+  data: any;
+  serviceList: { label: string; value: string }[];
+  onSubmit: (formData: Service) => void;
+  setEdited: (edited: boolean) => void;
+}
+
+function ServiceForm({
+  data,
+  isNew,
+  serviceList,
+  onSubmit,
+  setEdited
+}: ServiceFormProps) {
+  return (
+    <Formik
+      initialValues={data}
+      onSubmit={(values, actions) => {
+        const dependsOn = values.dependsOn.map((v: any) => parseInt(v, 10));
+        const { id, type } = values;
+        onSubmit({ type, id: parseInt(id, 10), dependsOn });
+        actions.setSubmitting(false);
+      }}
+    >
+      {props => {
+        setEdited(props.dirty);
+        return (
+          <Form>
+            <Stack spacing={4}>
+              <Box>
+                <TextInput
+                  name="id"
+                  label="Service ID"
+                  disabled={!isNew}
+                  isRequired
+                  pattern="\d*"
+                  helpText={isNew ? "Service Id should be a number" : undefined}
+                ></TextInput>
+              </Box>
+              <Box>
+                <RadioInput
+                  name="type"
+                  isRequired
+                  validate={s => (s ? undefined : "Service type needed.")}
+                  label="Service Type"
+                  items={SERVICE_TYPES}
+                ></RadioInput>
+              </Box>
+              <Box>
+                <CheckBoxInput
+                  name="dependsOn"
+                  label="Depends On"
+                  items={serviceList}
+                ></CheckBoxInput>
+              </Box>
+              <Stack isInline>
+                <Button
+                  isLoading={props.isSubmitting}
+                  variant="outline"
+                  mr={3}
+                  onClick={() => {}}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  isLoading={props.isSubmitting}
+                  type="submit"
+                  variantColor="teal"
+                >
+                  Submit
+                </Button>
+              </Stack>
+            </Stack>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 }
