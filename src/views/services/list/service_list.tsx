@@ -1,27 +1,34 @@
-import { Box, Button, Spinner } from "@chakra-ui/core";
-import React from "react";
+import { Box, Button, Spinner, Stack, Text } from "@chakra-ui/core";
+import React, { useState } from "react";
 import { useStoreState, useStoreActions } from "../../../store/hooks";
 import { ServiceID } from "../../../types/service";
 import { useFormUiContext } from "../state_provider";
-import { useDeleteServiceAction } from "../../../store/services.hooks";
+import {
+  useDeleteServiceAction,
+  useReloadService
+} from "../../../store/services.hooks";
 
 export function ServiceList() {
   const { onClickAdd } = useFormUiContext();
-  const state = useStoreState(state => state.services.dataState);
+  const loadingState = useStoreState(state => state.services.dataState);
   const serviceIds = useStoreState(state => state.services.allIds);
-  switch (state) {
+  switch (loadingState) {
     case "FETCHING":
       return <div>Loading</div>;
     case "EMPTY":
       return <div>No data available..</div>;
   }
   return (
-    <div>
-      <Button onClick={onClickAdd}>Add +</Button>
-      {serviceIds.map(serviceId => (
-        <ServiceCard serviceId={serviceId} key={serviceId} />
-      ))}
-    </div>
+    <>
+      <Box>
+        <Button onClick={onClickAdd}>Add +</Button>
+      </Box>
+      <Box h="100%" overflowY="auto">
+        {serviceIds.map(serviceId => (
+          <ServiceCard serviceId={serviceId} key={serviceId} />
+        ))}
+      </Box>
+    </>
   );
 }
 
@@ -32,21 +39,34 @@ function ServiceCard({ serviceId }: ServiceCardProps) {
   const { onClickEdit } = useFormUiContext();
   const [isLoading, onClickDelete] = useDeleteServiceAction(serviceId);
   const service = useStoreState(state => state.services.byId[serviceId]);
-  if (isLoading)
+  const [isReloading, reload] = useReloadService(serviceId);
+  if (isReloading || isLoading)
     return (
       <Box>
         <Spinner></Spinner>
       </Box>
     );
   return (
-    <Box>
-      {service.id}-{service.type}
-      <Button isLoading={isLoading} onClick={() => onClickEdit(serviceId)}>
-        Edit
-      </Button>
-      <Button isLoading={isLoading} onClick={onClickDelete}>
-        Delete
-      </Button>
-    </Box>
+    <Stack m={4}>
+      <Text>
+        {service.id}-{service.type}
+      </Text>
+      <Text>Dependencies: {service.dependsOn.join(", ")}</Text>
+      <Stack isInline spacing={4}>
+        <Button size="sm" onClick={reload}>
+          Reload
+        </Button>
+        <Button
+          size="sm"
+          isLoading={isLoading}
+          onClick={() => onClickEdit(serviceId)}
+        >
+          Edit
+        </Button>
+        <Button size="sm" isLoading={isLoading} onClick={onClickDelete}>
+          Delete
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
