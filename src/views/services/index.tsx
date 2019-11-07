@@ -34,7 +34,7 @@ function ServicesViewC() {
   return (
     <>
       <Stack h="100%" w="100%">
-        <Stack isInline w="50%" justifyContent="center" spacing={10}>
+        <Stack isInline ml={4} mr={4} justifyContent="center" spacing={10}>
           <Box>
             <ViewTypeSelect onTypeSelect={setViewType}></ViewTypeSelect>
           </Box>
