@@ -16,15 +16,18 @@ export function useFormState() {
     setUpdatedTime(Date.now());
     (onOpen as any)();
     return true;
-  }, []);
-  const onClickEdit = useCallback((id: number) => {
-    if (isOpen) return false;
-    setIsNew(false);
-    setSelectedId(id);
-    setUpdatedTime(Date.now());
-    (onOpen as any)();
-    return true;
-  }, []);
+  }, [isOpen, onOpen]);
+  const onClickEdit = useCallback(
+    (id: number) => {
+      if (isOpen) return false;
+      setIsNew(false);
+      setSelectedId(id);
+      setUpdatedTime(Date.now());
+      (onOpen as any)();
+      return true;
+    },
+    [isOpen, onOpen]
+  );
   const onClickDiscard = useCallback(() => {
     const a = !editedRef.current || window.confirm("Close");
     if (!a) return;
@@ -32,14 +35,14 @@ export function useFormState() {
     setSelectedId(-1);
     setUpdatedTime(Date.now());
     (onClose as any)();
-  }, []);
+  }, [onClose]);
   const setEdited = useCallback((edited: boolean) => {
     editedRef.current = edited;
   }, []);
   const onSubmitSuccess = useCallback(() => {
     setEdited(false);
     onClickDiscard();
-  }, []);
+  }, [setEdited, onClickDiscard]);
   return {
     selectedId,
     isNew,
@@ -56,8 +59,6 @@ export function useFormState() {
 const FormUiStateContext = React.createContext<ReturnType<typeof useFormState>>(
   {} as any
 );
-
-const FormUIStateProvider_ = FormUiStateContext.Provider;
 
 export function FormUIStateProvider({ children }: any) {
   const context = useFormState();

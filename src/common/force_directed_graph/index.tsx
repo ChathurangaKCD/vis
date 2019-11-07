@@ -40,14 +40,7 @@ function arrowHeadComponent(row: any, positionInPixels: any) {
 }
 
 function ForceDirectedGraph(props: ForceDirectedGraphProps) {
-  const {
-    className = "",
-    data,
-    height,
-    width,
-    animation,
-    onClickService
-  } = props;
+  const { className = "", data, height, width, onClickService } = props;
 
   const simData = useMemo(() => {
     const { nodes, links } = generateSimulation({

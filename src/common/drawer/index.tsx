@@ -1,13 +1,10 @@
-import React from "react";
 import {
   Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
+  DrawerCloseButton,
   DrawerContent,
-  DrawerCloseButton
+  DrawerOverlay
 } from "@chakra-ui/core";
+import React from "react";
 
 export function DrawerWrapper({
   isOpen,

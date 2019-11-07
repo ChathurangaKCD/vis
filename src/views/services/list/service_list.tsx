@@ -1,12 +1,12 @@
 import { Box, Button, Spinner, Stack, Text } from "@chakra-ui/core";
-import React, { useState } from "react";
-import { useStoreState, useStoreActions } from "../../../store/hooks";
-import { ServiceID } from "../../../types/service";
-import { useFormUiContext } from "../state_provider";
+import React from "react";
+import { useStoreState } from "../../../store/hooks";
 import {
   useDeleteServiceAction,
   useReloadService
 } from "../../../store/services.hooks";
+import { ServiceID } from "../../../types/service";
+import { useFormUiContext } from "../state_provider";
 
 export function ServiceList() {
   const { onClickAdd } = useFormUiContext();

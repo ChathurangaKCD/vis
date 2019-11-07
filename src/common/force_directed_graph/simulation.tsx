@@ -52,7 +52,7 @@ export function mapLinkToArrowHead(distanceFromNode: number) {
       (x1 > x2 && y1 > y2) || (x1 > x2 && y1 < y2) ? 180 : 0;
     const angle = (Math.atan(-(y2 - y1) / (x2 - x1)) * 180) / Math.PI;
     const key = `${sourceId}_${targetId}`;
-    return { ...pos, angle: angle + dirCorrection };
+    return { ...pos, key, angle: angle + dirCorrection };
   };
 }
 
