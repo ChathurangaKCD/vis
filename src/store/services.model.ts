@@ -19,6 +19,8 @@ export interface ServicesModel {
   setDataState: Action<ServicesModel, STORE_DATA_STATE>;
   /** Add new/Update existing service in store */
   upsertService: Action<ServicesModel, Service>;
+  /** Remove a service in store */
+  removeService: Action<ServicesModel, ServiceID>;
   /** Replace all service data with fetched data */
   replaceServices: Action<ServicesModel, Service[]>;
   /** Fetch all services & replace store data */
@@ -29,6 +31,8 @@ export interface ServicesModel {
   createService: ServiceThunk<Service, boolean>;
   /** Update exisitng service & update store */
   updateService: ServiceThunk<Service, boolean>;
+  /** Delete service & update store */
+  deleteService: ServiceThunk<ServiceID, boolean>;
   /** Compute dependants of each service */
   dependantsById: Computed<ServicesModel, { [x in ServiceID]: ServiceID[] }>;
 }
@@ -51,6 +55,11 @@ export const servicesModel: ServicesModel = {
       state.allIds.push(payload.id);
     }
     state.byId[payload.id] = payload;
+  }),
+  removeService: action((state, serviceId) => {
+    const idx = state.allIds.findIndex(id => id === serviceId);
+    state.allIds.splice(idx, 1);
+    delete state.byId[serviceId];
   }),
   reloadServices: thunk(async (actions, _, { injections }) => {
     actions.setDataState("FETCHING");
@@ -89,6 +98,16 @@ export const servicesModel: ServicesModel = {
     try {
       await injections.servicesAPI.updateService(serviceData);
       actions.upsertService(serviceData);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }),
+  deleteService: thunk(async (actions, serviceId, { injections }) => {
+    try {
+      await injections.servicesAPI.deleteServiceById(serviceId);
+      actions.removeService(serviceId);
       return true;
     } catch (error) {
       console.log(error);

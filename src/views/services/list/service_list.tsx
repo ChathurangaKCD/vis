@@ -1,8 +1,9 @@
-import { Box, Button } from "@chakra-ui/core";
+import { Box, Button, Spinner } from "@chakra-ui/core";
 import React from "react";
 import { useStoreState, useStoreActions } from "../../../store/hooks";
 import { ServiceID } from "../../../types/service";
 import { useFormUiContext } from "../state_provider";
+import { useDeleteServiceAction } from "../../../store/services.hooks";
 
 export function ServiceList() {
   const { onClickAdd } = useFormUiContext();
@@ -29,13 +30,23 @@ interface ServiceCardProps {
 }
 function ServiceCard({ serviceId }: ServiceCardProps) {
   const { onClickEdit } = useFormUiContext();
+  const [isLoading, onClickDelete] = useDeleteServiceAction(serviceId);
   const service = useStoreState(state => state.services.byId[serviceId]);
-  const onClickDelete = (serviceId: ServiceID) => {};
+  if (isLoading)
+    return (
+      <Box>
+        <Spinner></Spinner>
+      </Box>
+    );
   return (
     <Box>
       {service.id}-{service.type}
-      <Button onClick={() => onClickEdit(serviceId)}>Edit</Button>
-      <Button onClick={() => onClickDelete(serviceId)}>Delete</Button>
+      <Button isLoading={isLoading} onClick={() => onClickEdit(serviceId)}>
+        Edit
+      </Button>
+      <Button isLoading={isLoading} onClick={onClickDelete}>
+        Delete
+      </Button>
     </Box>
   );
 }
