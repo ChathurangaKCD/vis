@@ -5,7 +5,7 @@ import { useToast, useToastOptions } from "@chakra-ui/core";
 
 const successProps: Partial<useToastOptions> = {
   status: "success",
-  duration: 2000,
+  duration: 1000,
   isClosable: true
 };
 const errorProps: Partial<useToastOptions> = {
@@ -73,7 +73,16 @@ export function useUpsertService() {
   const { createService, updateService } = useStoreActions(
     actions => actions.services
   );
+  const services = useStoreState(state => state.services.byId);
   const onSubmit = useCallback(async (isNew: boolean, data: Service) => {
+    if (isNew && !!services[data.id]) {
+      toast({
+        ...errorProps,
+        title: `Failed`,
+        description: `A service with id ${data.id} already exists`
+      });
+      return false;
+    }
     const fn = isNew ? createService : updateService;
     const res = await fn(data);
     if (res) {
