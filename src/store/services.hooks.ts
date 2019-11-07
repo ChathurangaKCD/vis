@@ -22,15 +22,19 @@ export function useDeleteServiceAction(
   );
   const depCount = dependants ? dependants.length : 0;
   const toast = useToast();
-  const cb = useCallback(() => {
-    if (depCount !== 0)
-      return alert(
-        `Error: ${depCount} services have listed this as a dependancy `
-      );
+  const cb = useCallback(async () => {
+    if (depCount !== 0) {
+      toast({
+        ...errorProps,
+        title: `Delete failed`,
+        description: `${depCount} services have listed this as a dependancy`
+      });
+      return;
+    }
     const res = window.confirm(`Confirm delete?`);
     if (res) {
       setRunning(true);
-      const res = deleteFn(serviceId);
+      const res = await deleteFn(serviceId);
       if (res) {
         toast({
           ...successProps,
@@ -38,6 +42,11 @@ export function useDeleteServiceAction(
           description: `Service ${serviceId} deleted`
         });
       } else {
+        toast({
+          ...errorProps,
+          title: `Delete failed`,
+          description: `Failed to delete service ${serviceId}`
+        });
         setRunning(false);
       }
     }
@@ -53,7 +62,7 @@ export function useReloadService(serviceId: ServiceID): [boolean, () => void] {
   const toast = useToast();
   const reload = useCallback(async () => {
     setReloading(true);
-    const res = reloadServiceById(serviceId);
+    const res = await reloadServiceById(serviceId);
     if (res) {
       toast({
         ...successProps,
@@ -61,7 +70,11 @@ export function useReloadService(serviceId: ServiceID): [boolean, () => void] {
         description: `Refreshed service ${serviceId} data`
       });
     } else {
-      alert("failed");
+      toast({
+        ...errorProps,
+        title: `Failed`,
+        description: `Failed to refresh service ${serviceId} `
+      });
     }
     setReloading(false);
   }, []);
