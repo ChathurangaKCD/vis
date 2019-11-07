@@ -17,6 +17,7 @@
     "easy-peasy": "^3.1.1",
     "emotion-theming": "^10.0.19",
     "formik": "^2.0.3",
+    "gzip-all": "^1.0.0",
     "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
@@ -29,7 +30,9 @@
     "build": "react-scripts build",
     "postbuild": "gzip-all \"build/**/*.js\"",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "docker-build-install": "yarn && cd mock-api && yarn",
+    "docker-build": "yarn build && cd mock-api && yarn build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -45,8 +48,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gzip-all": "^1.0.0"
   }
 }
