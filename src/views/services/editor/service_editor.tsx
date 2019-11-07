@@ -49,7 +49,7 @@ export function ServiceEditor() {
   return (
     <>
       <DrawerHeader>{isNew ? "Add Service" : "Update Service"}</DrawerHeader>
-      <DrawerBody>
+      <DrawerBody height="100%" overflowY="auto">
         <ServiceForm
           key={updatedTime}
           isNew={isNew}
