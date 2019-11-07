@@ -2,6 +2,10 @@ import { useMemo, useState } from "react";
 import { useWindowSize } from "../../../common/utils/window_size";
 import { useStoreState } from "../../../store/hooks";
 import { ServiceID, ServiceType } from "../../../types/service";
+import {
+  GraphNode,
+  GraphLink
+} from "../../../common/force_directed_graph/types";
 
 export function useGetGraphSize(
   heightRatio: number = 0.8,
@@ -16,7 +20,7 @@ export function useGetGraphSize(
 export function useGetGraphData(selectedId: ServiceID | null) {
   const { byId, allIds } = useStoreState(state => state.services);
   const data = useMemo(() => {
-    const nodes = allIds.map(svcId => {
+    const nodes: GraphNode[] = allIds.map(svcId => {
       const { type } = byId[svcId];
       const isSelected = svcId === selectedId;
       return {
@@ -24,11 +28,15 @@ export function useGetGraphData(selectedId: ServiceID | null) {
         id: svcId,
         ...getNodeStyles(type, isSelected)
       };
-    });
-    const links = allIds.flatMap(svcId => {
-      return byId[svcId].dependsOn.map(depId => {
-        return { source: svcId, target: depId, value: 1 };
-      });
+    }) as any;
+    const links: GraphLink[] = allIds.flatMap(svcId => {
+      return byId[svcId].dependsOn
+        .map(depId => {
+          // remove invalid links
+          if (!byId[depId]) return null;
+          return { source: svcId, target: depId, value: 1 };
+        })
+        .filter(link => link !== null) as any;
     });
     return { nodes, links };
   }, [byId, allIds, selectedId]);

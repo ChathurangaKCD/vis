@@ -93,6 +93,9 @@ function ServiceForm({
           id: parseInt(id, 10),
           dependsOn
         });
+        // form closed
+        if (success) return;
+        // else stay in view
         actions.setSubmitting(false);
       }}
     >

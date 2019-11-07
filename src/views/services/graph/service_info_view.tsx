@@ -4,13 +4,15 @@ import {
   ButtonGroup,
   CloseButton,
   Flex,
-  Text
+  Text,
+  Spinner
 } from "@chakra-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { Service, ServiceType, ServiceID } from "../../../types/service";
 import { getNodeColor } from "./fns";
 import { useStoreState } from "../../../store/hooks";
 import { useFormUiContext } from "../state_provider";
+import { useDeleteServiceAction } from "../../../store/services.hooks";
 
 interface SelectedServiceInfoViewProps {
   serviceId: ServiceID;
@@ -19,10 +21,15 @@ interface SelectedServiceInfoViewProps {
 
 export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
   const { serviceId, onClickClose } = props;
-  const { id, type } = useStoreState(state => state.services.byId[serviceId]);
+  const { id, type } =
+    useStoreState(state => state.services.byId[serviceId]) || {};
   const { onClickEdit } = useFormUiContext();
+  const [isLoading, onClickDelete] = useDeleteServiceAction(serviceId);
   const colorVariant = getNodeColor(type);
   const bg = `${colorVariant}.400`;
+  useEffect(() => {
+    if (isLoading) onClickClose();
+  }, [isLoading]);
   return (
     <Flex justify="space-between" bg={bg} color="white">
       <Box m={2}>
@@ -46,6 +53,7 @@ export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
           m={1}
           variantColor={colorVariant}
           variant="solid"
+          onClick={onClickDelete}
         >
           Delete
         </Button>
