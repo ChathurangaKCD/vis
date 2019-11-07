@@ -1,12 +1,11 @@
-import { Flex, RadioButtonGroup, Stack, useDisclosure } from "@chakra-ui/core";
+import { Button, Flex, RadioButtonGroup, Stack, Box } from "@chakra-ui/core";
 import React, { useEffect, useState } from "react";
 import { DrawerWrapper } from "../../common/drawer";
 import { RadioButton } from "../../common/radio_button";
+import { useStoreActions } from "../../store/hooks";
 import { ServiceEditor } from "./editor/service_editor";
 import { ServiceGraph } from "./graph/service_graph";
 import { ServiceList } from "./list/service_list";
-import { useStoreActions } from "../../store/hooks";
-import { ServiceID } from "../../types/service";
 import { FormUIStateProvider, useFormUiContext } from "./state_provider";
 
 type ViewType = "list" | "graph";
@@ -32,9 +31,16 @@ function ServicesViewC() {
   return (
     <>
       <Stack h="100%" w="100%">
-        <Flex flexBasis="auto" justify="center">
-          <ViewTypeSelect onTypeSelect={setViewType}></ViewTypeSelect>
-        </Flex>
+        <Stack isInline w="50%" justifyContent="center" spacing={10}>
+          <Box>
+            <ViewTypeSelect onTypeSelect={setViewType}></ViewTypeSelect>
+          </Box>
+          <Box>
+            <Button onClick={() => reloadServices()} size="sm">
+              Refresh All
+            </Button>
+          </Box>
+        </Stack>
         <ViewContent />
       </Stack>
       <DrawerWrapper title="Update" isOpen={isOpen} onClose={onClickDiscard}>
