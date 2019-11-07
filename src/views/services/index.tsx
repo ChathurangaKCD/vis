@@ -1,4 +1,4 @@
-import { Button, Flex, RadioButtonGroup, Stack, Box } from "@chakra-ui/core";
+import { Box, Button, RadioButtonGroup, Stack } from "@chakra-ui/core";
 import React, { useEffect, useState } from "react";
 import { DrawerWrapper } from "../../common/drawer";
 import { RadioButton } from "../../common/radio_button";

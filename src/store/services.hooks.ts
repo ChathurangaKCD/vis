@@ -50,7 +50,7 @@ export function useDeleteServiceAction(
         setRunning(false);
       }
     }
-  }, []);
+  }, [deleteFn, depCount, serviceId, toast]);
   return [isRunning, cb];
 }
 
@@ -77,7 +77,7 @@ export function useReloadService(serviceId: ServiceID): [boolean, () => void] {
       });
     }
     setReloading(false);
-  }, []);
+  }, [reloadServiceById, serviceId, toast]);
   return [isReloading, reload];
 }
 
@@ -87,31 +87,34 @@ export function useUpsertService() {
     actions => actions.services
   );
   const services = useStoreState(state => state.services.byId);
-  const onSubmit = useCallback(async (isNew: boolean, data: Service) => {
-    if (isNew && !!services[data.id]) {
-      toast({
-        ...errorProps,
-        title: `Failed`,
-        description: `A service with id ${data.id} already exists`
-      });
-      return false;
-    }
-    const fn = isNew ? createService : updateService;
-    const res = await fn(data);
-    if (res) {
-      toast({
-        ...successProps,
-        title: `Success`,
-        description: `${isNew ? "Created" : "Updated"} service ${data.id}`
-      });
-    } else {
-      toast({
-        ...errorProps,
-        title: `Failed`,
-        description: `Failed to ${isNew ? "create" : "update"} service`
-      });
-    }
-    return res;
-  }, []);
+  const onSubmit = useCallback(
+    async (isNew: boolean, data: Service) => {
+      if (isNew && !!services[data.id]) {
+        toast({
+          ...errorProps,
+          title: `Failed`,
+          description: `A service with id ${data.id} already exists`
+        });
+        return false;
+      }
+      const fn = isNew ? createService : updateService;
+      const res = await fn(data);
+      if (res) {
+        toast({
+          ...successProps,
+          title: `Success`,
+          description: `${isNew ? "Created" : "Updated"} service ${data.id}`
+        });
+      } else {
+        toast({
+          ...errorProps,
+          title: `Failed`,
+          description: `Failed to ${isNew ? "create" : "update"} service`
+        });
+      }
+      return res;
+    },
+    [createService, services, toast, updateService]
+  );
   return onSubmit;
 }

@@ -1,9 +1,9 @@
 import { DrawerBody, DrawerHeader } from "@chakra-ui/core";
-import React, { useCallback, useMemo } from "react";
-import { Service, ServiceID } from "../../../types/service";
-import { useStoreState, useStoreActions } from "../../../store/hooks";
-import { useFormUiContext } from "../state_provider";
+import React, { useMemo } from "react";
+import { useStoreState } from "../../../store/hooks";
 import { useUpsertService } from "../../../store/services.hooks";
+import { Service, ServiceID } from "../../../types/service";
+import { useFormUiContext } from "../state_provider";
 import { ServiceForm } from "./service_form";
 
 export const SERVICE_TYPES = [

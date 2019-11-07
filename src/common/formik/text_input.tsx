@@ -1,17 +1,11 @@
 import {
-  Checkbox,
-  CheckboxGroup,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
-  Input,
-  Radio,
-  RadioGroup,
-  NumberInput,
-  NumberInputField,
-  FormHelperText
+  Input
 } from "@chakra-ui/core";
-import { Field, useField } from "formik";
+import { useField } from "formik";
 import React from "react";
 
 interface FormikInput {

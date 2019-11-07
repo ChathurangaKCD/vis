@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import {
+  GraphLink,
+  GraphNode
+} from "../../../common/force_directed_graph/types";
 import { useWindowSize } from "../../../common/utils/window_size";
 import { useStoreState } from "../../../store/hooks";
 import { ServiceID, ServiceType } from "../../../types/service";
-import {
-  GraphNode,
-  GraphLink
-} from "../../../common/force_directed_graph/types";
 
 export function useGetGraphSize(
   heightRatio: number = 0.8,

@@ -1,12 +1,5 @@
-import React, { useState } from "react";
-import {
-  Box,
-  RadioButtonGroup,
-  Button,
-  Stack,
-  Flex,
-  useDisclosure
-} from "@chakra-ui/core";
+import { Button } from "@chakra-ui/core";
+import React from "react";
 
 interface RadioButtonProps {
   children: string;

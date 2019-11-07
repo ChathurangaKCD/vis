@@ -17,7 +17,7 @@ export function RadioInput(props: RadioInputProps) {
   const radioOnChange = ({ target: { value } }: any) =>
     onChange({ target: { name, value } });
   return (
-    <FormControl as="fieldset" isInvalid={isInvalid} isRequired>
+    <FormControl as="fieldset" isInvalid={isInvalid} isRequired={isRequired}>
       <FormLabel as="legend">{label}</FormLabel>
       <RadioGroup value={fieldValue as any} onChange={radioOnChange}>
         {items.map(({ label, value }) => (
