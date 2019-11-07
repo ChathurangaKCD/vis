@@ -1,4 +1,5 @@
 import * as _Requests_ from "./requests";
+import { IGNORE_REQUEST_ERRORS } from "./constants";
 
 const handler: ProxyHandler<typeof Requests> = {
   get: function(target: any, prop: string, receiver) {
@@ -19,4 +20,4 @@ const handler: ProxyHandler<typeof Requests> = {
 
 const serviceProxy: typeof _Requests_ = new Proxy(_Requests_, handler);
 
-export const Requests = serviceProxy;
+export const Requests = IGNORE_REQUEST_ERRORS ? serviceProxy : _Requests_;
