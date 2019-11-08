@@ -23,7 +23,7 @@ type ServiceThunk<PayloadType, ReturnType> = Thunk<
 
 export interface ServicesModel {
   dataState: STORE_DATA_STATE;
-  byId: { [x: string]: Service };
+  byId: { [x in ServiceID]: Service };
   allIds: ServiceID[];
   setDataState: Action<ServicesModel, STORE_DATA_STATE>;
   /** Add new/Update existing service in store */

@@ -22,7 +22,7 @@ export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
   const { serviceId, onClickClose } = props;
   const { id, type } =
     useStoreState(state => state.services.byId[serviceId]) || {};
-  const { onClickEdit } = useFormUiContext();
+  const { openEditor } = useFormUiContext();
   const [isLoading, onClickDelete] = useDeleteServiceAction(serviceId);
   const colorVariant = getNodeColor(type);
   const bg = `${colorVariant}.400`;
@@ -43,7 +43,7 @@ export function ServiceInfoView(props: SelectedServiceInfoViewProps) {
           m={1}
           variantColor={colorVariant}
           variant="solid"
-          onClick={() => onClickEdit(serviceId)}
+          onClick={() => openEditor(serviceId)}
         >
           Edit
         </Button>

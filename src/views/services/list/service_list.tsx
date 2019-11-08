@@ -9,7 +9,7 @@ import { ServiceID } from "../../../types/service";
 import { useFormUiContext } from "../state_provider";
 
 export function ServiceList() {
-  const { onClickAdd } = useFormUiContext();
+  const { openEditor } = useFormUiContext();
   const loadingState = useStoreState(state => state.services.dataState);
   const serviceIds = useStoreState(state => state.services.allIds);
   switch (loadingState) {
@@ -21,7 +21,7 @@ export function ServiceList() {
   return (
     <>
       <Box>
-        <Button onClick={onClickAdd}>Add +</Button>
+        <Button onClick={() => openEditor()}>Add +</Button>
       </Box>
       <Box h="100%" overflowY="auto">
         {serviceIds.map(serviceId => (
@@ -36,7 +36,7 @@ interface ServiceCardProps {
   serviceId: ServiceID;
 }
 function ServiceCard({ serviceId }: ServiceCardProps) {
-  const { onClickEdit } = useFormUiContext();
+  const { openEditor } = useFormUiContext();
   const [isLoading, onClickDelete] = useDeleteServiceAction(serviceId);
   const service = useStoreState(state => state.services.byId[serviceId]);
   const [isReloading, reload] = useReloadService(serviceId);
@@ -59,7 +59,7 @@ function ServiceCard({ serviceId }: ServiceCardProps) {
         <Button
           size="sm"
           isLoading={isLoading}
-          onClick={() => onClickEdit(serviceId)}
+          onClick={() => openEditor(serviceId)}
         >
           Edit
         </Button>

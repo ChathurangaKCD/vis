@@ -27,7 +27,7 @@ function ServicesViewC() {
   }, [reloadServices]);
   const [viewType, setViewType] = useState<ViewType>("list");
   const ViewContent = viewType === "list" ? ServiceList : ServiceGraph;
-  const { isOpen, onClickDiscard } = useFormUiContext();
+  const { isOpen, key, closeEditor } = useFormUiContext();
   const isLoading = useStoreState(
     state => state.services.dataState === "FETCHING"
   );
@@ -50,8 +50,8 @@ function ServicesViewC() {
         </Stack>
         <ViewContent />
       </Stack>
-      <DrawerWrapper title="Update" isOpen={isOpen} onClose={onClickDiscard}>
-        {isOpen && <ServiceEditor />}
+      <DrawerWrapper title="Update" isOpen={isOpen} onClose={closeEditor}>
+        {isOpen && <ServiceEditor key={key} />}
       </DrawerWrapper>
     </>
   );
