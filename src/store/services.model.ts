@@ -1,6 +1,15 @@
-import { Action, action, Thunk, thunk, computed, Computed } from "easy-peasy";
-import { Injections } from "./injections";
+import {
+  Action,
+  action,
+  computed,
+  Computed,
+  Thunk,
+  thunk,
+  ThunkOn,
+  thunkOn
+} from "easy-peasy";
 import { Service, ServiceID } from "../types/service";
+import { Injections } from "./injections";
 
 type STORE_DATA_STATE = "EMPTY" | "FETCHING" | "AVAILABLE" | "ERROR";
 
@@ -35,6 +44,8 @@ export interface ServicesModel {
   deleteService: ServiceThunk<ServiceID, boolean>;
   /** Compute dependants of each service */
   dependantsById: Computed<ServicesModel, { [x in ServiceID]: ServiceID[] }>;
+  /** Refetch and update a modified/created service */
+  onUpsertService: ThunkOn<ServicesModel>;
 }
 
 export const servicesModel: ServicesModel = {
@@ -114,6 +125,22 @@ export const servicesModel: ServicesModel = {
       return false;
     }
   }),
+  onUpsertService: thunkOn(
+    actions => [actions.createService, actions.updateService],
+    async (actions, targetAction) => {
+      const { result, payload } = targetAction;
+      if (result === true) {
+        const res = await actions.reloadServiceById(payload.id);
+        console.log(
+          `Refetch service ${payload.id} ${res ? "success" : "error"}`
+        );
+      } else {
+        console.log(
+          "Service update action resulted in an error. Won't be refetched."
+        );
+      }
+    }
+  ),
   dependantsById: computed(
     [state => state.allIds, state => state.byId],
     (allIds, byId) => {
