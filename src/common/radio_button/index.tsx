@@ -1,14 +1,11 @@
-import React, { useState } from "react";
-import {
-  Box,
-  RadioButtonGroup,
-  Button,
-  Stack,
-  Flex,
-  useDisclosure
-} from "@chakra-ui/core";
+import { Button } from "@chakra-ui/core";
+import React from "react";
 
-export const RadioButton = React.forwardRef((props, ref) => {
+interface RadioButtonProps {
+  children: string;
+  value: string;
+}
+export const RadioButton = React.forwardRef((props: RadioButtonProps, ref) => {
   const { isChecked, isDisabled, value, children, ...rest } = props as any;
   return (
     <Button

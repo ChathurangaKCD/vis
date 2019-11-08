@@ -12,13 +12,19 @@ export async function fetchAllServices(): Promise<Service[]> {
 
 export async function fetchServiceById(serviceId: ServiceID): Promise<Service> {
   const url = BASE_URL + serviceId;
-  const service = await Requests.postData(url);
+  const service = await Requests.getData(url);
   return service;
 }
 
 export async function createService(service: Service): Promise<boolean> {
   const url = BASE_URL;
   await Requests.postData(url, service);
+  return true;
+}
+
+export async function updateService(service: Service): Promise<boolean> {
+  const url = BASE_URL;
+  await Requests.postData(url, service, "PUT");
   return true;
 }
 
